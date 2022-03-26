@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/Scenes/preload.unity
+    guid: 659231de7f6e0b24bbe1a5f3b69bffe5
+  - enabled: 1
+    path: Assets/Scenes/StartMenu.unity
+    guid: 3671fff1466100648b902769405a5dc4
+  - enabled: 1
+    path: Assets/Scenes/Cabinet.unity
+    guid: fc0d858b62f93e949be056a1602aa110
+  - enabled: 1
+    path: Assets/Scenes/Treatment.unity
+    guid: 0c8f5817ff7a0884496d7b0fbcdce941
+  - enabled: 1
+    path: Assets/Scenes/InventoryScene 1.unity
+    guid: d9f12fdf2fcee9049a9b3ac03634677a
+  - enabled: 1
+    path: Assets/Scenes/TaskBoardScene.unity
+    guid: 262ed8e9b968fa340a498025d0215154
+  - enabled: 1
+    path: Assets/Scenes/PacientJournalScene.unity
+    guid: 6951b8d32698fcd45b8905d9fd24c122
+  - enabled: 1
+    path: Assets/Scenes/CatchPatientGame.unity
+    guid: 630975e6899c304409f5cf28e2551e33
+  - enabled: 1
+    path: Assets/Scenes/MindGame.unity
+    guid: 2a9734085a7635a40b5d84e4e82e18e5
+  m_configObjects: {}
