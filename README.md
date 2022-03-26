@@ -1,1 +1,1 @@
-# HexGame using minimax and alpha–beta pruning
+# Unity HexGame using minimax and alpha–beta pruning
