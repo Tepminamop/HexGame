@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Owners//кому принадлежит гекс
+public enum Owners//hex owner
 {
     Player,
     AI,
@@ -18,26 +18,23 @@ public class Board : MonoBehaviour
     public char[,] gameBoard = new char[9, 9];
     private int minimaxDepth = 6;
 
-    public bool CanSelect(Cell curCell, int turn)//можем ли мы выбрать данный гекс
+    public bool CanSelect(Cell curCell, int turn)//check if we can choose hex
     {
         return false;
     }
     public int Move(Cell fromCell, Cell toCell)
     {
         int distance = -1;
-        //Debug.Log("Diff: " + (toCell.pos.First - fromCell.pos.First));
         switch (toCell.pos.First - fromCell.pos.First)
         {
             case 0:
                 distance = Mathf.Abs(toCell.pos.Second - fromCell.pos.Second);
                 break;
             case 1:
-                //Debug.Log(fromCell.pos.Second + " " + toCell.pos.Second);
                 if ((toCell.pos.Second >= fromCell.pos.Second - 1) && (toCell.pos.Second <= fromCell.pos.Second + 2))
                 {
                     if (fromCell.pos.Second == toCell.pos.Second || toCell.pos.Second == fromCell.pos.Second + 1)
                     {
-                        //Debug.Log(fromCell.pos.Second + " " + toCell.pos.Second);
                         distance = 1;
                     }
                     else
@@ -82,12 +79,12 @@ public class Board : MonoBehaviour
         int i = cell.pos.First;
         int j = cell.pos.Second;
 
-        changedCells.Add(new Cell(i, j - 1/*, cell.id*/, Owners.AI));
-        changedCells.Add(new Cell(i, j + 1/*, cell.id*/, Owners.AI));
-        changedCells.Add(new Cell(i - 1, j - 1/*, cell.id*/, Owners.AI));
-        changedCells.Add(new Cell(i - 1, j/*, cell.id*/, Owners.AI));
-        changedCells.Add(new Cell(i + 1, j/*, cell.id*/, Owners.AI));
-        changedCells.Add(new Cell(i + 1, j + 1/*, cell.id*/, Owners.AI));
+        changedCells.Add(new Cell(i, j - 1, Owners.AI));
+        changedCells.Add(new Cell(i, j + 1, Owners.AI));
+        changedCells.Add(new Cell(i - 1, j - 1, Owners.AI));
+        changedCells.Add(new Cell(i - 1, j, Owners.AI));
+        changedCells.Add(new Cell(i + 1, j, Owners.AI));
+        changedCells.Add(new Cell(i + 1, j + 1, Owners.AI));
 
         return changedCells;
     }
@@ -109,6 +106,7 @@ public class Board : MonoBehaviour
                 return maximizingPlayer ? System.Int32.MaxValue : -999998;
         }
 
+        //if ai
         if (maximizingPlayer)
         {
             if (depth >= this.minimaxDepth)
@@ -121,23 +119,18 @@ public class Board : MonoBehaviour
                     {
                         if (board[i, j] == 'p')
                         {
-                            //if (first)
-                            //Debug.Log("P: " + i.ToString() + " " + j.ToString());
                             p++;
                         }
                         else if (board[i, j] == 'a')
                         {
-                            //if (first)
-                            //Debug.Log("A: " + i.ToString() + " " + j.ToString());
                             a++;
                         }
                     }
                 }
-                //Debug.Log('\n');
-                //Debug.Log("ANSWER " + a.ToString() + " " + p.ToString());
                 first = true;
                 return a - p;
             }
+
             //move & aftermove
             if (depth > 0)
             {
@@ -191,18 +184,6 @@ public class Board : MonoBehaviour
                 }
             }
 
-            /*
-            for (int k = 0; k < 9; k++)
-            {
-                for (int z = 0; z < 9; z++)
-                {
-                    if (board[k, z] == 'a' || board[k, z] == 'p')
-                        Debug.Log(board[k, z]);
-                }
-                Debug.Log('\n');
-            }
-            */
-
             //check board what hexes we already visited
             char[,] checkBoard = new char[9, 9];
             for (int k = 0; k < 9; k++)
@@ -223,21 +204,10 @@ public class Board : MonoBehaviour
                 {
                     if (board[i, j] == 'a')
                     {
-                        //Debug.Log("Depth: " + depth.ToString() + " " + i.ToString() + " " + j.ToString() + '\n');
                         int y = i;
                         int x = j;
                         Pair<int, int> newPos = new Pair<int, int>(y, x + 1);
 
-                        /*
-                        char[,] tmpBoard = new char[9, 9];                
-                        for (int k = 0; k < 9; k++)
-                        {
-                            for (int z = 0; z < 9; z++)
-                            {
-                                tmpBoard[k, z] = board[k, z];
-                            }
-                        }
-                        */
                         if (!(newPos.First < 0 || newPos.First > 8 || newPos.Second < 0 || newPos.Second > 8)) 
                         {
                             if (checkBoard[newPos.First, newPos.Second] != 'c' && board[newPos.First, newPos.Second] == 'n') {
@@ -501,34 +471,6 @@ public class Board : MonoBehaviour
                     board[curPos.First + 1, curPos.Second] = 'a';
                 }
             }
-            /*
-            if (depth >= this.minimaxDepth)
-            {
-                int p = 0;
-                int a = 0;
-                for (int i = 0; i < 9; i++)
-                {
-                    for (int j = 0; j < 9; j++)
-                    {
-                        if (board[i, j] == 'p')
-                        {
-                            //if (first)
-                                //Debug.Log("P: " + i.ToString() + " " + j.ToString());
-                            p++;
-                        }
-                        else if (board[i, j] == 'a')
-                        {
-                            //if (first)
-                                //Debug.Log("A: " + i.ToString() + " " + j.ToString());
-                            a++;
-                        }
-                    }
-                }
-                //Debug.Log('\n');
-                //Debug.Log("ANSWER " + a.ToString() + " " + p.ToString());
-                first = true;
-                return a - p;
-            }*/
 
             //check board what hexes we already visited
             char[,] checkBoard = new char[9, 9];
@@ -548,23 +490,10 @@ public class Board : MonoBehaviour
                 {
                     if (board[i, j] == 'p')
                     {
-                        //Debug.Log("Depth: " + depth.ToString() + " " + i.ToString() + " " + j.ToString() + '\n');
                         int y = i;
                         int x = j;
                         Pair<int, int> newPos = new Pair<int, int>(y, x + 1);
 
-                        /*
-                        char[,] tmpBoard = new char[9,9];
-                        for (int k = 0; k < 9; k++)
-                        {
-                            for (int z = 0; z < 9; z++)
-                            {
-                                char temp = new char();
-                                temp = board[k, z];
-                                tmpBoard[k, z] = temp;
-                            }
-                        }
-                        */
                         if (!(newPos.First < 0 || newPos.First > 8 || newPos.Second < 0 || newPos.Second > 8))
                         {
                             if (checkBoard[newPos.First, newPos.Second] != 'c' && board[newPos.First, newPos.Second] == 'n')
@@ -749,34 +678,30 @@ public class Board : MonoBehaviour
     }
 }
 
-//[System.Serializable]
-public class AllCells//массив всех гексов доски
+public class AllCells//array that contains all hexes
 {
-    public Cell[] cells;//зависит от уровня сложности пациента
+    public Cell[] cells;
     public AllCells()
     {
         cells = new Cell[61];
     }
 }
-//[System.Serializable]
-public class Cell //: System.IComparable<Cell>//отдельный гекс
+
+public class Cell //one hex
 {
     public Pair<int, int> pos = new Pair<int, int>();
     public Owners owner;
-    //public int id;
 
     public Cell()
     {
         owner = Owners.Neutral;
         pos.First = -1;
         pos.Second = -1;
-        //id = -1;
     }
 
-    public Cell(int _row, int _col, /*int _id,*/ Owners _owner = Owners.Neutral)
+    public Cell(int _row, int _col, Owners _owner = Owners.Neutral)
     {
         owner = _owner;
-        //id = _id;
         pos.First = _row;
         pos.Second = _col;
     }
@@ -792,11 +717,6 @@ public class Cell //: System.IComparable<Cell>//отдельный гекс
         pos.Second = col;
     }
 
-    public void SetId(int id)
-    {
-        //this.id = id;
-    }
-    
     public static bool operator ==(Cell cell1, Cell cell2)
     {
         return (cell1.pos.First == cell2.pos.First) && (cell1.pos.Second == cell2.pos.Second);
@@ -809,23 +729,8 @@ public class Cell //: System.IComparable<Cell>//отдельный гекс
     
     public override string ToString()
     {
-        return this.pos.ToString() + " " /*+ this.id.ToString()*/ + " " + this.owner.ToString();
+        return this.pos.ToString() + " " + " " + this.owner.ToString();
     }
-
-    //public int CompareTo(Cell obj)
-    //{
-    //    Cell c = obj as Cell;
-    //    if (c != null)
-    //    {
-    //        if ((this.pos.First == c.pos.First) && (this.pos.Second == c.pos.Second))
-    //            return 0;
-    //        else
-    //            return this.id >= c.id ? 1 : -1;
-    //    }
-    //    else
-    //        throw new System.NotImplementedException();
-    //}
-
 
     public override bool Equals(object obj)
     {
@@ -833,7 +738,7 @@ public class Cell //: System.IComparable<Cell>//отдельный гекс
             return false;
 
         Cell c = obj as Cell;
-        if ((this.pos.First == c.pos.First) && (this.pos.Second == c.pos.Second)/* && (this.owner == c.owner)*/)
+        if ((this.pos.First == c.pos.First) && (this.pos.Second == c.pos.Second))
             return true;
         else
             return false;
@@ -841,7 +746,7 @@ public class Cell //: System.IComparable<Cell>//отдельный гекс
 
     public bool Equals(Cell obj)
     {
-        return obj != null && (this.pos.First == obj.pos.First) && (this.pos.Second == obj.pos.Second) /*&& (this.owner == obj.owner)*/;
+        return obj != null && (this.pos.First == obj.pos.First) && (this.pos.Second == obj.pos.Second);
     }
 
     public override int GetHashCode()

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class DisplayBoard : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
+public class DisplayBoard : MonoBehaviour, IPointerClickHandler
 {
     public Dictionary<GameObject, Cell> cellsDisplayed = new Dictionary<GameObject, Cell>();
     public Dictionary<Cell, GameObject> objectsDisplayed = new Dictionary<Cell, GameObject>();
@@ -19,15 +19,7 @@ public class DisplayBoard : MonoBehaviour, IPointerDownHandler, IPointerClickHan
     {
         CreateCells();
     }
-    void Update()
-    {
-        UpdateScore();
-    }
 
-    public void UpdateScore()
-    {
-
-    }
     public void CreateCells()
     {
         cellsDisplayed = new Dictionary<GameObject, Cell>();
@@ -57,11 +49,10 @@ public class DisplayBoard : MonoBehaviour, IPointerDownHandler, IPointerClickHan
                         count++;
                     }
                 }
-                board.container.cells[i] = new Cell(row, col/*, i*/);
+                board.container.cells[i] = new Cell(row, col);
                 cellsDisplayed.Add(obj.gameObject, board.container.cells[i]);
                 objectsDisplayed.Add(board.container.cells[i], obj.gameObject);
                 board.gameBoard[row, col] = 'n';
-                //Debug.Log(row.ToString() + " " + col.ToString() + " " + board.gameBoard[row, col].ToString()/* + " " + board.container.cells[i].id*/);
                 i++;
                 col++;
             }
@@ -76,15 +67,6 @@ public class DisplayBoard : MonoBehaviour, IPointerDownHandler, IPointerClickHan
 
         objectsDisplayed[board.container.cells[0]].GetComponent<Image>().color = ChangeColor(objectsDisplayed[board.container.cells[0]].GetComponent<Image>().color, 1f);
         objectsDisplayed[board.container.cells[60]].GetComponent<Image>().color = ChangeColor(objectsDisplayed[board.container.cells[60]].GetComponent<Image>().color, 1f, 0f, 0f, 0f);
-        /*
-        for (int z = 0; z < 9; z++)
-        {
-            for (int v = 0; v < 9; v++)
-            {
-                Debug.Log(z.ToString() + " " + v.ToString() + " " + board.gameBoard[z, v].ToString());
-            }
-        }*/
-
     }
     public void ChangeTurn()
     {
@@ -121,7 +103,7 @@ public class DisplayBoard : MonoBehaviour, IPointerDownHandler, IPointerClickHan
     {
 
     }
-    public void OnPointerClick(PointerEventData eventData) //разбить на функции
+    public void OnPointerClick(PointerEventData eventData) 
     {
         GameObject go = eventData.pointerCurrentRaycast.gameObject;
         if (go.transform.tag == "Slot" && turn)
@@ -129,11 +111,6 @@ public class DisplayBoard : MonoBehaviour, IPointerDownHandler, IPointerClickHan
             Debug.Log(cellsDisplayed[go].ToString() + " " + board.gameBoard[cellsDisplayed[go].pos.First, cellsDisplayed[go].pos.Second].ToString() + "; CurCell: " + curCell.ToString());
             HandleTouch(go);
         }
-    }
-
-    public void OnPointerDown(PointerEventData eventData)
-    {
-
     }
 
     public Color ChangeColor(Color color, float a, float r = 1f, float g = 1f, float b = 1f)
@@ -147,11 +124,11 @@ public class DisplayBoard : MonoBehaviour, IPointerDownHandler, IPointerClickHan
 
     public void HandleTouch(GameObject go)
     {
-        if (curCell.pos.First == -1 && cellsDisplayed[go].owner == Owners.Player)//смотрим можем ли мы передвинуть эту соту (если она принадлежит игроку, то она может стать текущей)
+        if (curCell.pos.First == -1 && cellsDisplayed[go].owner == Owners.Player)//check if we can move this hex (if owner is player, than we can)
         {
-            curCell = cellsDisplayed[go];//она становится текущей
+            curCell = cellsDisplayed[go];//hex becomes current
         }
-        else if ((curCell.pos.First == cellsDisplayed[go].pos.First) && (curCell.pos.Second == cellsDisplayed[go].pos.Second))//смотрим, попал ли игрок по уже выбранной соте, если да, то его выбор сбрасывается
+        else if ((curCell.pos.First == cellsDisplayed[go].pos.First) && (curCell.pos.Second == cellsDisplayed[go].pos.Second))//if player picked hex that he has already picked, this hex stop being current
         {
             curCell = new Cell();
             if (cellsDisplayed[go].owner == Owners.Neutral)
@@ -159,14 +136,14 @@ public class DisplayBoard : MonoBehaviour, IPointerDownHandler, IPointerClickHan
                 go.GetComponent<Image>().color = ChangeColor(go.GetComponent<Image>().color, 1f);
             }
         }
-        else if (curCell.pos.First >= 0 && cellsDisplayed[go].owner == Owners.Neutral) //смотрим, можем ли мы туда походить
+        else if (curCell.pos.First >= 0 && cellsDisplayed[go].owner == Owners.Neutral)//check if we can move hex there
         {
             int distance = board.Move(curCell, cellsDisplayed[go]);
             switch (distance)
             {
                 case 1:
                     go.GetComponent<Image>().color = ChangeColor(go.GetComponent<Image>().color, 1f);
-                    curCell = new Cell();//сбрасываем curCell, так как мы походили
+                    curCell = new Cell();//because we moved
                     if (turn)
                     {
                         cellsDisplayed[go].ChangeOwner(Owners.Player);
@@ -190,7 +167,7 @@ public class DisplayBoard : MonoBehaviour, IPointerDownHandler, IPointerClickHan
                     }
 
                     go.GetComponent<Image>().color = ChangeColor(go.GetComponent<Image>().color, 1f);
-                    curCell = new Cell();//сбрасываем curCell, так как мы походили
+                    curCell = new Cell();//because we moved
 
                     AfterMoveChangeDisplay(cellsDisplayed[go]);
                     ChangeTurn();
